@@ -52,7 +52,9 @@ def main():
                     gs.makeMove(move)
                     sqSelected = ()
                     playerClicks = []
-
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undoMove()
 
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
