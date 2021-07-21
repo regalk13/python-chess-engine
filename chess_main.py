@@ -27,10 +27,14 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = GameState()
+    validMoves = gs.getAllPossibleMoves()
+    moveMade = False
     loadImages()
     running = True
     sqSelected = ()
     playerClicks = []
+
+
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -49,12 +53,18 @@ def main():
                 if len(playerClicks) == 2:
                     move = Move(playerClicks[0],playerClicks[1], gs.board)
                     print(move.getChessNotation())
-                    gs.makeMove(move)
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True
                     sqSelected = ()
                     playerClicks = []
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
                     gs.undoMove()
+                    moveMade = True
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
 
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
