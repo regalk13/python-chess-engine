@@ -33,7 +33,10 @@ def main():
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
-        
+            elif e.type == p.MOUSEBUTTONDOWN:
+                location = p.mouse.get_pos()
+                col = location[0]//SQ_SIZE
+                col = location[1]//SQ_SIZE
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
         p.display.flip()
