@@ -25,6 +25,9 @@ class GameState():
         self.pins = []
         self.chescks = []
         self.enpassantPossible = ()
+        self.currentClastingRight = CastleRights(True, True, True, True)
+        self.castleRightsLog = [self.currentClastingRight]
+        self.castleRightsLogappend(self.currentClastingRight)
 
     def makeMove(self, move):
         self.board[move.startRow][move.startCol] = "--"
@@ -52,6 +55,11 @@ class GameState():
             self.enpassantPossible = ()
 
 
+        # Castling
+        updateCastleRights(move)
+
+
+
     def undoMove(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
@@ -67,7 +75,27 @@ class GameState():
 
             if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
-            
+        
+    def updateCastleRights(self, move):
+        if move.pieceMoved == 'wK':
+            self.currentClastingRight.wks = False
+            self.currentClastingRight.wqs = False
+        elif move.PieceMoved == 'bK':
+            self.currentClastingRight.bks = False
+            self.currentClastingRight.bqs = False
+        elif move.pieceMoved == 'wR':
+            if move.startRow == 7:
+                if move.startCol == 0:
+                    self.currentClastingRight.wps = False
+                if move.startCol == 7:
+                    self.currentClastingRight.wks = False
+
+        elif move.pieceMoved == 'wR':
+            if move.startRow == 0:
+                if move.startCol == 0:
+                    self.currentClastingRnight.bps = False
+                if move.startCol == 7:
+                    self.currentClastingRight.bks = False
 
     def getValidMoves(self):
         tempenpassantPossible = self.enpassantPossible
@@ -362,6 +390,15 @@ class GameState():
                 elif (r+1, c+1) == self.enpassantPossible:
                     if not piecePinned or  pinDirection == (-1, 0):
                         moves.append(Move((r,c), (r+1,c+1),self.board, enpassantPossible=True))
+
+
+class CastleRights():
+    def __init__(self, wks, bks, wps, bqs):
+        self.wks = wks
+        self.bks = bks
+        self.wps = wps
+        self.bqs = bqs
+
 
 class Move():
         ranksToRows = {"1": 7, "2": 6, "3": 5, "4":4,
