@@ -26,8 +26,29 @@ class GameState():
         self.chescks = []
         self.enpassantPossible = ()
         self.currentClastingRight = CastleRights(True, True, True, True)
-        self.castleRightsLog = [self.currentClastingRight]
-        self.castleRightsLogappend(self.currentClastingRight)
+        self.castleRightsLog = [CastleRights(self.currentClastingRight.wks,self.currentClastingRight.bks,
+                                            self.currentClastingRight.wqs, self.currentClastingRight.bqs)]
+
+    def updateCastleRights(self, move):
+        if move.pieceMoved == 'wK':
+            self.currentClastingRight.wks = False
+            self.currentClastingRight.wqs = False
+        elif move.pieceMoved == 'bK':
+            self.currentClastingRight.bks = False
+            self.currentClastingRight.bqs = False
+        elif move.pieceMoved == 'wR':
+            if move.startRow == 7:
+                if move.startCol == 0:
+                    self.currentClastingRight.wps = False
+                if move.startCol == 7:
+                    self.currentClastingRight.wks = False
+
+        elif move.pieceMoved == 'wR':
+            if move.startRow == 0:
+                if move.startCol == 0:
+                    self.currentClastingRnight.bps = False
+                if move.startCol == 7:
+                    self.currentClastingRight.bks = False
 
     def makeMove(self, move):
         self.board[move.startRow][move.startCol] = "--"
@@ -56,8 +77,10 @@ class GameState():
 
 
         # Castling
-        updateCastleRights(move)
+        self.updateCastleRights(move)
 
+        self.castleRightsLog = [CastleRights(self.currentClastingRight.wks,self.currentClastingRight.bks,
+                                            self.currentClastingRight.wqs, self.currentClastingRight.bqs)]
 
 
     def undoMove(self):
@@ -75,27 +98,13 @@ class GameState():
 
             if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
-        
-    def updateCastleRights(self, move):
-        if move.pieceMoved == 'wK':
-            self.currentClastingRight.wks = False
-            self.currentClastingRight.wqs = False
-        elif move.PieceMoved == 'bK':
-            self.currentClastingRight.bks = False
-            self.currentClastingRight.bqs = False
-        elif move.pieceMoved == 'wR':
-            if move.startRow == 7:
-                if move.startCol == 0:
-                    self.currentClastingRight.wps = False
-                if move.startCol == 7:
-                    self.currentClastingRight.wks = False
 
-        elif move.pieceMoved == 'wR':
-            if move.startRow == 0:
-                if move.startCol == 0:
-                    self.currentClastingRnight.bps = False
-                if move.startCol == 7:
-                    self.currentClastingRight.bks = False
+
+            self.castleRightsLog.pop()
+            self.currentClastingRight = self.castleRightsLog[-1]
+                
+            
+
 
     def getValidMoves(self):
         tempenpassantPossible = self.enpassantPossible
@@ -287,6 +296,14 @@ class GameState():
 
                     else:
                         self.blackKingLocation = (r,c)
+        
+        self.getCastleMoves(r, c, moves, allyColor)
+
+    
+    def getCastleMoves(Self, r, c, moves, allyColor):
+        pass
+
+
 
     def getRockMoves(self, r, c, moves):
         piecePinned = False
@@ -393,10 +410,10 @@ class GameState():
 
 
 class CastleRights():
-    def __init__(self, wks, bks, wps, bqs):
+    def __init__(self, wks, bks, wqs, bqs):
         self.wks = wks
         self.bks = bks
-        self.wps = wps
+        self.wqs = wqs
         self.bqs = bqs
 
 
