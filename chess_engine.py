@@ -23,6 +23,8 @@ class GameState():
         self.blackKingLocation = (0,4)
         self.inCheck = False
         self.pins = []
+        self.checkmate = False
+        self.stalemate = False
         self.chescks = []
         self.enpassantPossible = ()
         self.currentClastingRight = CastleRights(True, True, True, True)
@@ -164,7 +166,16 @@ class GameState():
             else:
                 self.getCastleMoves(self.blackKingLocation[0],  self.blackKingLocation[1], moves)
             
-    
+        if len(moves) == 0:
+            if self.inCheck():
+                self.checkmate = True
+
+            else:
+                self.stalemate = True
+
+        else:
+            self.checkmate = False
+            self.stalemate = False
 
         self.currentClastingRight = tempCastleRights
         return moves
