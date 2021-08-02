@@ -87,7 +87,7 @@ def main():
             animate = False
 
         drawGameState(screen, gs, validMoves, sqSelected)
-       
+
         if gs.checkmate:
             gameOver = True
             if gs.whiteToMove:
@@ -136,6 +136,9 @@ def drawPieces(screen, board):
             piece = board[r][c]
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+
+
 
 def animationMove(move, screen, board, clock):
     global colors

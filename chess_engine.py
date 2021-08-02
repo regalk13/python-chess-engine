@@ -165,9 +165,9 @@ class GameState():
                 self.getCastleMoves(self.whiteKingLocation[0],  self.whiteKingLocation[1], moves)
             else:
                 self.getCastleMoves(self.blackKingLocation[0],  self.blackKingLocation[1], moves)
-            
-        if len(moves) == 0:
-            if self.inCheck():
+        print(moves)    
+        if len(moves) == 2:
+            if self.squareUnderAttack(kingRow, kingCol):
                 self.checkmate = True
 
             else:
