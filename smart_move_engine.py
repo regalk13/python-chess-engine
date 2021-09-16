@@ -52,7 +52,8 @@ def findBestMove(gs, validMoves):
 def findBestMoveMinMax(gs, validMoves):
     global nextMove
     nextMove = None
-    findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
+    random.shuffle(validMoves)
+    findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
     return nextMove
 
 
@@ -93,6 +94,23 @@ def findMoveMinMax(gs, validMoves, depth, whiteToMove):
 
         return minScore
 
+
+def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
+    global nextMove
+    if depth == 0:
+        return turnMultiplier * scoreBoard(gs)
+
+    maxScore = -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMoves = gs.getValidMoves()
+        score = -findMoveNegaMax(gs, nextMoves, depth-1, -turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move   
+        gs.undoMove()
+    return maxScore    
 
 
 def scoreBoard(gs):
