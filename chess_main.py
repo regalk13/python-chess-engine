@@ -37,7 +37,7 @@ def main():
     sqSelected = ()
     playerClicks = []
     gameOver = False
-    playerOne = True
+    playerOne = False
     playerTwo = False
 
     while running:
@@ -75,7 +75,7 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
-
+                    gameOver = False 
                 if e.key == p.K_r:
                     gs = GameState()
                     validMoves = gs.getValidMoves()
@@ -83,9 +83,10 @@ def main():
                     playerClicks = []
                     moveMade = False
                     animate = False
+                    gameOver = False
         
         if not gameOver and not humanTurn:
-            AIMove = smart_move_engine.findBestMove(gs, validMoves)
+            AIMove = smart_move_engine.findBestMoveMinMax(gs, validMoves)
             if AIMove is None:
                 AIMove = smart_move_engine.findRandomMove(validMoves)
             gs.makeMove(AIMove)

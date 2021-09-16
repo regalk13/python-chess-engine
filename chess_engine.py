@@ -1,5 +1,5 @@
 class GameState():
-    def __init__(self):
+   def __init__(self):
         # 8x8 Board on a 2d list, each element has 2 characters.
         # First character represents the color of the piece.
         # Second represents the type of the pice.
@@ -31,7 +31,7 @@ class GameState():
         self.castleRightsLog = [CastleRights(self.currentClastingRight.wks,self.currentClastingRight.bks,
                                             self.currentClastingRight.wqs, self.currentClastingRight.bqs)]
 
-    def updateCastleRights(self, move):
+   def updateCastleRights(self, move):
         if move.pieceMoved == 'wK':
             self.currentClastingRight.wks = False
             self.currentClastingRight.wqs = False
@@ -52,7 +52,7 @@ class GameState():
                 elif move.startCol == 7:
                     self.currentClastingRight.bks = False
 
-    def makeMove(self, move):
+   def makeMove(self, move):
         self.board[move.startRow][move.startCol] = "--"
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move)
@@ -89,7 +89,7 @@ class GameState():
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentClastingRight.wks,self.currentClastingRight.bks, self.currentClastingRight.wqs, self.currentClastingRight.bqs ))
 
-    def undoMove(self):
+   def undoMove(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
             self.board[move.startRow][move.startCol] = move.pieceMoved
@@ -118,7 +118,11 @@ class GameState():
                     self.board[move.endRow][move.endCol - 2] = self.board[move.endRow][move.endCol + 1]
                     self.board[move.endRow][move.endCol + 1] = '--'
 
-    def getValidMoves(self):  
+
+            self.checkmate = False
+            self.stalemate = False
+
+   def getValidMoves(self):  
         tempCastleRights = CastleRights(self.currentClastingRight.wks, self.currentClastingRight.bks, self.currentClastingRight.wqs, self.currentClastingRight.bqs)
 
         moves = []
@@ -177,7 +181,7 @@ class GameState():
         self.currentClastingRight = tempCastleRights
         return moves
 
-    def checkForPinsAndChecks(self):
+   def checkForPinsAndChecks(self):
         pins = []
         checks = []
         inCheck = False
@@ -238,14 +242,14 @@ class GameState():
 
         return inCheck, pins, checks
 
-    def inCheck(self):
+   def inCheck(self):
         if self.whiteToMove:
             return self.squareUnderAttack(self.whiteKingLocation[0], self.whiteKingLocation[1])
 
         else:
              return self.squareUnderAttack(self.blackKingLocation[0], self.blackKingLocation[1])
 
-    def squareUnderAttack(self, r, c):
+   def squareUnderAttack(self, r, c):
         self.whiteToMove = not self.whiteToMove
         oppMoves = self.getAllPossibleMoves()
         self.whiteToMove = not self.whiteToMove
@@ -255,11 +259,11 @@ class GameState():
 
         return False
 
-    def getQueenMoves(self, r, c, moves):
+   def getQueenMoves(self, r, c, moves):
         self.getRockMoves(r, c, moves)
         self.getBishopMoves(r, c, moves)
 
-    def getKnightMoves(self, r, c, moves):
+   def getKnightMoves(self, r, c, moves):
         piecePinned = False
         for i in range(len(self.pins)-1,-1,-1):
             if self.pins[i][0] == r and self.pins[i][1] == c:
@@ -278,7 +282,7 @@ class GameState():
                     if endPiece[0] != allyColor:
                         moves.append(Move((r,c),(endRow, endCol), self.board))
 
-    def getBishopMoves(self, r, c, moves):
+   def getBishopMoves(self, r, c, moves):
         directions = ((-1, -1), (-1, 1), (1, -1), (1, 1))
         enemyColor = "b" if self.whiteToMove else "w"
         for d in directions:
@@ -297,7 +301,7 @@ class GameState():
                 else:
                     break
     
-    def getKingMoves(self, r, c, moves):
+   def getKingMoves(self, r, c, moves):
         rowMoves = (-1, -1, -1, 0, 0, 1, 1, 1)
         colMoves = (-1, 0, 1, -1, 1, -1, 0, 1)        
         allyColor = "w" if self.whiteToMove else "b"
@@ -326,7 +330,7 @@ class GameState():
 
 
     
-    def getCastleMoves(self, row, col, moves):
+   def getCastleMoves(self, row, col, moves):
         """
         Generate all valid castle moves for the king at (row, col) and add them to the list of moves.
         """
@@ -339,17 +343,17 @@ class GameState():
                 not self.whiteToMove and self.currentClastingRight.bqs):
             self.getQueensideCastleMoves(row, col, moves)
 
-    def getKingsideCastleMoves(self, row, col, moves):
+   def getKingsideCastleMoves(self, row, col, moves):
         if self.board[row][col + 1] == '--' and self.board[row][col + 2] == '--':
             if not self.squareUnderAttack(row, col + 1) and not self.squareUnderAttack(row, col + 2):
                 moves.append(Move((row, col), (row, col + 2), self.board, isCastleMove=True))
 
-    def getQueensideCastleMoves(self, row, col, moves):
+   def getQueensideCastleMoves(self, row, col, moves):
         if self.board[row][col - 1] == '--' and self.board[row][col - 2] == '--' and self.board[row][col - 3] == '--':
             if not self.squareUnderAttack(row, col - 1) and not self.squareUnderAttack(row, col - 2):
                 moves.append(Move((row, col), (row, col - 2), self.board, isCastleMove=True))
 
-    def getRockMoves(self, r, c, moves):
+   def getRockMoves(self, r, c, moves):
         piecePinned = False
         pinDirection = ()
         for i in range(len(self.pins)-1,-1,-1):
@@ -380,7 +384,7 @@ class GameState():
                     break
                     
 
-    def getAllPossibleMoves(self):
+   def getAllPossibleMoves(self):
         moves = []
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
@@ -391,7 +395,7 @@ class GameState():
 
         return moves
                     
-    def getPawnMoves(self, r, c, moves):
+   def getPawnMoves(self, r, c, moves):
         piecePinned = False
         pinDirection = ()
         for i in range(len(self.pins)-1,-1,-1):
