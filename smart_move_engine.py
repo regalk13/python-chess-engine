@@ -113,6 +113,24 @@ def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
     return maxScore    
 
 
+def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier):
+    global nextMove
+    if depth == 0:
+        return turnMultiplier * scoreBoard(gs)
+
+    maxScore = -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMoves = gs.getValidMoves()
+        score = -findMoveNegaMax(gs, nextMoves, depth-1, -turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move   
+        gs.undoMove()
+    return maxScore   
+
+
 def scoreBoard(gs):
     if gs.checkmate:
         if gs.whiteToMove:
